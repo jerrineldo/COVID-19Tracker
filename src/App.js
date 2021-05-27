@@ -4,13 +4,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Card from "react-bootstrap/Card";
 import CardDeck from "react-bootstrap/CardDeck";
 import axios from "axios";
-import CardColumns from "react-bootstrap/CardColumns";
-import Form from "react-bootstrap/Form";
+import GoogleMapReact from "google-map-react";
 
 function App() {
   const [latest, setLatest] = useState([]);
   const [results, setResults] = useState([]);
-  const [searchCountries, setSearchCountries] = useState("");
 
   useEffect(() => {
     axios
@@ -29,39 +27,32 @@ function App() {
 
   const date = new Date(parseInt(latest.updated));
   const lastUpdated = date.toString();
-  const filterCountries = results.filter((item) => {
-    return searchCountries !== "" ? item.country.includes(searchCountries) : item;
-  });
 
-  const countries = filterCountries.map((data, i) => {
+  const countriesLocations = results.map((data, i) => {
     return (
-      <div class="col-md-4 d-inline-block mt-2 card-column">
-        <Card
-          key={i}
-          bg="light"
-          text="dark"
-          className="text-center countrycard"
-        >
-          <Card.Img variant="top" src={data.countryInfo.flag} />
-          <Card.Body>
-            <Card.Title>{data.country}</Card.Title>
-            <Card.Text>Cases {data.cases}</Card.Text>
-            <Card.Text>Deaths {data.deaths}</Card.Text>
-            <Card.Text>Recovered {data.recovered}</Card.Text>
-            <Card.Text>Today's cases {data.todayCases}</Card.Text>
-            <Card.Text>Today's deaths {data.todayDeaths}</Card.Text>
-            <Card.Text>Active {data.active}</Card.Text>
-            <Card.Text>Critical {data.critical}</Card.Text>
-          </Card.Body>
-        </Card>
+      <div
+        lat={data.countryInfo.lat}
+        lng={data.countryInfo.long}
+        style={{
+          color: "red",
+          backgroundColor: "#FFF",
+          height: "25px",
+          width: "35px",
+          textAlign: "center",
+          borderRadius: "30%"
+        }}
+      >
+        <img height="10px" src={data.countryInfo.flag}/>
+        <br/>
+        {data.cases}
       </div>
     );
   });
 
   return (
     <div>
-      <br/>
-      <h2 style = {{textAlign:"center"}}>Covid-19 Live Stats</h2>
+      <br />
+      <h2 style={{ textAlign: "center" }}>Covid-19 Live Stats</h2>
       <br />
       <CardDeck>
         <div class="container-fluid mt-4">
@@ -102,8 +93,8 @@ function App() {
           </div>
         </div>
       </CardDeck>
-      <br/>
-      <Form>
+      <br />
+      {/* <Form>
         <Form.Group controlId="formGroupSearch">
           <Form.Control
             type="text"
@@ -117,6 +108,15 @@ function App() {
         <div class="row justify-content-center">
           <CardColumns>{countries}</CardColumns>
         </div>
+      </div> */}
+      <div style={{ height: "100vh", width: "90%", margin: "0 auto" }}>
+        <GoogleMapReact
+          bootstrapURLKeys={{ key: "AIzaSyCI1nVQquwtoddlnBE4VTJEroKQesPcIVQ" }}
+          defaultCenter={{ lat: 13, lng: 105 }}
+          defaultZoom={4}
+        >
+          {countriesLocations}
+        </GoogleMapReact>
       </div>
     </div>
   );
